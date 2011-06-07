@@ -25,12 +25,14 @@ SIGNAL produto: STD_LOGIC_VECTOR(7 DOWNTO 0);
 
 SIGNAL carry_OUT_0, carry_OUT_1, carry_OUT_2, carry_OUT_3: STD_LOGIC;
 SIGNAL sum_OUT_0, sum_OUT_1, sum_OUT_2, sum_OUT_3: STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL a_row0, a_row1, a_row2, a_row3: STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL sumIN_row0, sumIN_row1, sumIN_row2, sumIN_row3: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 BEGIN
 
 PROCESS (clk, reset)
 BEGIN
-	IF reset='0' THEN
+	IF reset='1' THEN
 		operando0 <= (OTHERS=>'0');
 		operando1 <= (OTHERS=>'0');
 		reg_produto <= (OTHERS=>'0');
@@ -41,37 +43,47 @@ BEGIN
 	END IF;
 END PROCESS;
 
+a_row0 <= operando0(0) & operando0(0) & operando0(0) & operando0(0);
+a_row1 <= operando0(1) & operando0(1) & operando0(1) & operando0(1);
+a_row2 <= operando0(2) & operando0(2) & operando0(2) & operando0(2);
+a_row3 <= operando0(3) & operando0(3) & operando0(3) & operando0(3);
+
+sumIN_row0 <= "0000";
+sumIN_row1 <= carry_OUT_0 & sum_OUT_0(3) & sum_OUT_0(2) & sum_OUT_0(1);
+sumIN_row2 <= carry_OUT_1 & sum_OUT_1(3) & sum_OUT_1(2) & sum_OUT_1(1);
+sumIN_row3 <= carry_OUT_2 & sum_OUT_2(3) & sum_OUT_2(2) & sum_OUT_2(1);
+
 multiROW_0: multiROW PORT MAP(
-a => operando0(0) & operando0(0) & operando0(0) & operando0(0),
+a => a_row0,
 b => operando1,
-sum_IN => "0000",
+sum_IN => sumIN_row0,
 carry_IN => '0',
 carry_OUT => carry_OUT_0,
 sum_OUT => sum_OUT_0
 );
 
 multiROW_1: multiROW PORT MAP(
-a => operando0(1) & operando0(1) & operando0(1) & operando0(1),
+a => a_row1,
 b => operando1,
-sum_IN => carry_OUT_0 & sum_OUT_0(3) & sum_OUT_0(2) & sum_OUT_0(1),
+sum_IN => sumIN_row1,
 carry_IN => '0',
 carry_OUT => carry_OUT_1,
 sum_OUT => sum_OUT_1
 );
 
 multiROW_2: multiROW PORT MAP(
-a => operando0(2) & operando0(2) & operando0(2) & operando0(2),
+a => a_row2,
 b => operando1,
-sum_IN => carry_OUT_1 & sum_OUT_1(3) & sum_OUT_1(2) & sum_OUT_1(1),
+sum_IN => sumIN_row2,
 carry_IN => '0',
 carry_OUT => carry_OUT_2,
 sum_OUT => sum_OUT_2
 );
 
 multiROW_3: multiROW PORT MAP(
-a => operando0(3) & operando0(3) & operando0(3) & operando0(3),
+a => a_row3,
 b => operando1,
-sum_IN => carry_OUT_2 & sum_OUT_2(3) & sum_OUT_2(2) & sum_OUT_2(1),
+sum_IN => sumIN_row3,
 carry_IN => '0',
 carry_OUT => carry_OUT_3,
 sum_OUT => sum_OUT_3

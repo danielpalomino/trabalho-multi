@@ -25,6 +25,7 @@ SIGNAL produto: STD_LOGIC_VECTOR(7 DOWNTO 0);
 
 SIGNAL carry_OUT_0, carry_OUT_1, carry_OUT_2, carry_OUT_3: STD_LOGIC;
 SIGNAL sum_OUT_0, sum_OUT_1, sum_OUT_2, sum_OUT_3: STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL a_row0, a_row1, a_row2, a_row3: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 --estgios de pipeline
 SIGNAL reg_b1, reg_b2, reg_b3: STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -36,11 +37,13 @@ SIGNAL reg_p1: STD_LOGIC_VECTOR(1 DOWNTO 0);
 SIGNAL reg_p2: STD_LOGIC_VECTOR(2 DOWNTO 0);
 SIGNAL reg_sum_OUT0, reg_sum_OUT1, reg_sum_OUT2: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
+
+
 BEGIN
 
 PROCESS (clk, reset)
 BEGIN
-	IF reset='0' THEN
+	IF reset='1' THEN
 		operando0 <= (OTHERS=>'0');
 		operando1 <= (OTHERS=>'0');
 		reg_produto <= (OTHERS=>'0');
@@ -79,8 +82,14 @@ BEGIN
 	END IF;
 END PROCESS;
 
+a_row0 <= operando0(0) & operando0(0) & operando0(0) & operando0(0);
+a_row1 <= reg_a1(0) & reg_a1(0) & reg_a1(0) & reg_a1(0);
+a_row2 <= reg_a2(0) & reg_a2(0) & reg_a2(0) & reg_a2(0);
+a_row3 <= reg_a3 & reg_a3 & reg_a3 & reg_a3;
+
+
 multiROW_0: multiROW PORT MAP(
-a => operando0(0) & operando0(0) & operando0(0) & operando0(0),
+a => a_row0,
 b => operando1,
 sum_IN => "0000",
 carry_IN => '0',
@@ -89,7 +98,7 @@ sum_OUT => sum_OUT_0
 );
 
 multiROW_1: multiROW PORT MAP(
-a => reg_a1(0) & reg_a1(0) & reg_a1(0) & reg_a1(0),
+a => a_row1,
 b => reg_b1,
 sum_IN => reg_sum_OUT0,
 carry_IN => '0',
@@ -98,7 +107,7 @@ sum_OUT => sum_OUT_1
 );
 
 multiROW_2: multiROW PORT MAP(
-a => reg_a2(0) & reg_a2(0) & reg_a2(0) & reg_a2(0),
+a => a_row2,
 b => reg_b2,
 sum_IN => reg_sum_OUT1,
 carry_IN => '0',
@@ -107,7 +116,7 @@ sum_OUT => sum_OUT_2
 );
 
 multiROW_3: multiROW PORT MAP(
-a => reg_a3 & reg_a3 & reg_a3 & reg_a3,
+a => a_row3,
 b => reg_b3,
 sum_IN => reg_sum_OUT2,
 carry_IN => '0',
